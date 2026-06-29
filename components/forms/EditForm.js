@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
 import * as Location from 'expo-location';
 
@@ -129,41 +129,6 @@ const EditForm = ({ initialHotspot }) => {
     }
   };
 
-  const handleDelete = async () => {
-    Alert.alert(
-      "Delete Hotspot",
-      "Are you sure you want to delete this hotspot?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel"
-        },
-        {
-          text: "Delete",
-          onPress: async () => {
-            try {
-              const response = await fetch(`http://145.24.237.86:8011/hotspots/${initialHotspot.id}`, {
-                method: 'DELETE',
-              });
-
-              if (response.ok) {
-                Alert.alert('Success', 'Hotspot deleted successfully!');
-                navigation.goBack();
-              } else {
-                const errorData = await response.json();
-                Alert.alert('Error', `Failed to delete hotspot: ${errorData.message || response.statusText}`);
-              }
-            } catch (error) {
-              console.error('Network request failed:', error);
-              Alert.alert('Error', 'Could not connect to the server. Please check your network.');
-            }
-          },
-          style: "destructive"
-        }
-      ]
-    );
-  };
-
   return (
     <ScrollView className="flex-1 p-4 bg-white">
       <Text className="text-xl font-bold mb-4">Edit Hotspot</Text>
@@ -187,7 +152,7 @@ const EditForm = ({ initialHotspot }) => {
           <MapView
             ref={mapRef}
             style={styles.map}
-            provider={PROVIDER_GOOGLE}
+            provider="google"
             initialRegion={mapRegion}
             onPress={handleMapPress}
             showsUserLocation={true}
@@ -215,13 +180,6 @@ const EditForm = ({ initialHotspot }) => {
         onPress={handleUpdate}
       >
         <Text className="text-white text-lg font-bold">Update Hotspot</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        className="bg-red-500 p-4 rounded-lg items-center"
-        onPress={handleDelete}
-      >
-        <Text className="text-white text-lg font-bold">Delete Hotspot</Text>
       </TouchableOpacity>
     </ScrollView>
   );
