@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import AppHeader from '../layout/AppHeader';
-import CreateForm from '../forms/createForm'; // Import the CreateForm component
+import CreateForm from '../forms/CreateForm'; // Import the CreateForm component
 
 const CreateHotspotScreen = ({ navigation }) => {
   return (

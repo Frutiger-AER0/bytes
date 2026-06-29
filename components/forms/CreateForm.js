@@ -6,13 +6,13 @@ import * as Location from 'expo-location';
 
 const CreateForm = () => {
   const navigation = useNavigation();
-  const mapRef = useRef(null); // Ref for MapView
+  const mapRef = useRef(null);
   const [name, setName] = useState('');
   const [review, setReview] = useState('');
-  const [latitude, setLatitude] = useState(37.78825); // Default to San Francisco
-  const [longitude, setLongitude] = useState(-122.4324); // Default to San Francisco
-  const [mapRegion, setMapRegion] = useState(null); // State for map region
-  const [locationLoading, setLocationLoading] = useState(true); // New state for location loading
+  const [latitude, setLatitude] = useState(37.78825);
+  const [longitude, setLongitude] = useState(-122.4324);
+  const [mapRegion, setMapRegion] = useState(null);
+  const [locationLoading, setLocationLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -34,14 +34,14 @@ const CreateForm = () => {
         const region = {
           latitude: newLatitude,
           longitude: newLongitude,
-          latitudeDelta: 0.005, // Street level zoom
-          longitudeDelta: 0.005, // Street level zoom
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
         };
         setMapRegion(region);
 
         // Animate to the user's location if mapRef is available
         if (mapRef.current) {
-          mapRef.current.animateToRegion(region, 1000); // Animate over 1 second
+          mapRef.current.animateToRegion(region, 1000);
         }
       } catch (error) {
         console.error("Error getting current location:", error);
