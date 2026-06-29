@@ -6,6 +6,7 @@ import MainScreen from './components/screens/MainScreen';
 import SettingScreen from './components/screens/SettingScreen';
 import MapScreen from './components/screens/MapScreen';
 import CreateHotspotScreen from './components/screens/CreateHotspotScreen';
+import EditHotspotScreen from './components/screens/EditHotspotScreen';
 import './global.css';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -43,6 +44,7 @@ export default function App() {
         <Stack.Screen name="MainTabs" component={TabNavigator} />
         <Stack.Screen name="Settings" component={SettingScreen} />
         <Stack.Screen name="CreateHotspot" component={CreateHotspotScreen} />
+        <Stack.Screen name="EditHotspot" component={EditHotspotScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
