@@ -2,12 +2,13 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, ActivityIndicator, Alert, StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 import AppHeader from '../layout/AppHeader';
 import { useLayout } from '../../context/LayoutContext';
 
 const MapScreen = ({ navigation }) => {
   const { darkMode } = useLayout();
+  const route = useRoute();
   const mapRef = useRef(null);
   const [hotspots, setHotspots] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,42 +21,59 @@ const MapScreen = ({ navigation }) => {
     setError(null);
     setLocationLoading(true);
 
-    try {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission Denied', 'Permission to access location was denied. Please enable it in settings to use this feature.');
-        setMapRegion({
+    const { hotspotCoordinates } = route.params || {};
+
+    let initialRegion = null;
+
+    if (hotspotCoordinates) {
+      initialRegion = {
+        latitude: hotspotCoordinates.latitude,
+        longitude: hotspotCoordinates.longitude,
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.005,
+      };
+      setMapRegion(initialRegion);
+      setLocationLoading(false);
+    } else {
+      try {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert('Permission Denied', 'Permission to access location was denied. Please enable it in settings to use this feature.');
+          initialRegion = {
+            latitude: 37.78825,
+            longitude: -122.4324,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          };
+        } else {
+          let location = await Location.getCurrentPositionAsync({});
+          initialRegion = {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+          };
+        }
+      } catch (e) {
+        console.error("Error getting current location:", e);
+        Alert.alert('Location Error', 'Could not get your current location. Please check your device settings.');
+        initialRegion = {
           latitude: 37.78825,
           longitude: -122.4324,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
-        });
-      } else {
-        let location = await Location.getCurrentPositionAsync({});
-        const newRegion = {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          latitudeDelta: 0.005,
-          longitudeDelta: 0.005,
         };
-        setMapRegion(newRegion);
-        if (mapRef.current) {
-          mapRef.current.animateToRegion(newRegion, 1000);
-        }
+      } finally {
+        setMapRegion(initialRegion);
+        setLocationLoading(false);
       }
-    } catch (e) {
-      console.error("Error getting current location:", e);
-      Alert.alert('Location Error', 'Could not get your current location. Please check your device settings.');
-      setMapRegion({
-        latitude: 37.78825,
-        longitude: -122.4324,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      });
-    } finally {
-      setLocationLoading(false);
     }
 
+    if (mapRef.current && initialRegion) {
+      mapRef.current.animateToRegion(initialRegion, 1000);
+    }
+
+    // Fetch Hotspots
     try {
       const response = await fetch('http://145.24.237.86:8011/hotspots');
       if (!response.ok) {
@@ -70,7 +88,7 @@ const MapScreen = ({ navigation }) => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [route.params]); // Re-run if route params change
 
   useFocusEffect(
     useCallback(() => {

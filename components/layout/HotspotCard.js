@@ -38,10 +38,24 @@ const HotspotCard = ({ hotspot }) => {
     }
   };
 
+  const handleLongPress = () => {
+    if (hotspot.latitude && hotspot.longitude) {
+      navigation.navigate('Map', {
+        hotspotCoordinates: {
+          latitude: parseFloat(hotspot.latitude),
+          longitude: parseFloat(hotspot.longitude),
+        },
+      });
+    } else {
+      console.warn("Hotspot has no valid coordinates for map navigation.");
+    }
+  };
+
   return (
     <TouchableOpacity
       className={`flex-row items-center justify-between p-4 mb-3 rounded-lg shadow-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}
       onPress={() => navigation.navigate('HotspotDetail', { hotspot: hotspot })}
+      onLongPress={handleLongPress} // Add onLongPress handler
     >
       <Text className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{hotspot.name}</Text>
       <TouchableOpacity className="p-2" onPress={toggleFavorite}>
