@@ -4,10 +4,10 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { useFocusEffect } from '@react-navigation/native';
 import AppHeader from '../layout/AppHeader';
-import { useLayout } from '../../context/LayoutContext'; // Import useLayout
+import { useLayout } from '../../context/LayoutContext';
 
 const MapScreen = ({ navigation }) => {
-  const { darkMode } = useLayout(); // Get darkMode from context
+  const { darkMode } = useLayout();
   const mapRef = useRef(null);
   const [hotspots, setHotspots] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,14 +20,12 @@ const MapScreen = ({ navigation }) => {
     setError(null);
     setLocationLoading(true);
 
-    // 1. Get User Location
     try {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         Alert.alert('Permission Denied', 'Permission to access location was denied. Please enable it in settings to use this feature.');
-        // If permission denied, set a default region
         setMapRegion({
-          latitude: 37.78825, // Default to San Francisco
+          latitude: 37.78825,
           longitude: -122.4324,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
@@ -37,8 +35,8 @@ const MapScreen = ({ navigation }) => {
         const newRegion = {
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
-          latitudeDelta: 0.005, // Street level zoom
-          longitudeDelta: 0.005, // Street level zoom
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
         };
         setMapRegion(newRegion);
         if (mapRef.current) {
@@ -48,7 +46,6 @@ const MapScreen = ({ navigation }) => {
     } catch (e) {
       console.error("Error getting current location:", e);
       Alert.alert('Location Error', 'Could not get your current location. Please check your device settings.');
-      // Set a default region even on error
       setMapRegion({
         latitude: 37.78825,
         longitude: -122.4324,
@@ -59,7 +56,6 @@ const MapScreen = ({ navigation }) => {
       setLocationLoading(false);
     }
 
-    // 2. Fetch Hotspots
     try {
       const response = await fetch('http://145.24.237.86:8011/hotspots');
       if (!response.ok) {
@@ -80,7 +76,6 @@ const MapScreen = ({ navigation }) => {
     useCallback(() => {
       fetchLocationAndHotspots();
       return () => {
-        // Optional: cleanup function if needed
       };
     }, [fetchLocationAndHotspots])
   );
@@ -107,13 +102,14 @@ const MapScreen = ({ navigation }) => {
       <AppHeader navigation={navigation} />
       {mapRegion ? (
         <MapView
+          key={darkMode ? 'dark-map' : 'light-map'} // Add key to force re-render
           ref={mapRef}
           style={styles.map}
           provider={PROVIDER_GOOGLE}
           initialRegion={mapRegion}
           showsUserLocation={true}
           showsMyLocationButton={true}
-          userInterfaceStyle={darkMode ? 'dark' : 'light'} // Apply dark/light style to map itself
+          userInterfaceStyle={darkMode ? 'dark' : 'light'}
         >
           {hotspots.map((hotspot) => (
             hotspot.latitude && hotspot.longitude && (
@@ -140,7 +136,7 @@ const MapScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   map: {
-    flex: 1, // Take up all available space
+    flex: 1,
   },
 });
 

@@ -7,7 +7,7 @@ const AppHeader = ({ navigation, showMenuButton = true, showBackButton = false }
   const { darkMode } = useLayout(); // Get darkMode from context
 
   return (
-    <View className="w-full h-[100px] flex-row items-end px-[15px] bg-[#f8f8f8] dark:bg-gray-800 border-b border-b-[#e0e0e0] dark:border-b-gray-700 pt-[10px] pb-[10px]">
+    <View className={`w-full h-[100px] flex-row items-end px-[15px] border-b pt-[10px] pb-[10px] ${darkMode ? 'bg-gray-800 border-b-gray-700' : 'bg-[#f8f8f8] border-b-[#e0e0e0]'}`}>
       {/* Left Section (Back Button) */}
       <View className="w-[42px] h-[42px] justify-center items-center">
         {showBackButton && (
@@ -19,7 +19,7 @@ const AppHeader = ({ navigation, showMenuButton = true, showBackButton = false }
 
       {/* Center Section (Title) */}
       <View className="flex-1 justify-center items-center">
-        <Text className="text-[24px] font-bold text-black dark:text-white">Bytes</Text>
+        <Text className={`text-[24px] font-bold ${darkMode ? 'text-white' : 'text-black'}`}>Bytes</Text>
       </View>
 
       {/* Right Section (Menu Button) */}

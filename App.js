@@ -2,23 +2,23 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'; // Import for swipe mode
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import MainScreen from './components/screens/MainScreen';
 import SettingScreen from './components/screens/SettingScreen';
 import MapScreen from './components/screens/MapScreen';
 import CreateHotspotScreen from './components/screens/CreateHotspotScreen';
 import EditHotspotScreen from './components/screens/EditHotspotScreen';
 import HotspotScreen from './components/screens/HotspotScreen';
-import { LayoutProvider, useLayout } from './context/LayoutContext'; // Import LayoutProvider and useLayout
+import { LayoutProvider, useLayout } from './context/LayoutContext';
 import './global.css';
 import { Ionicons } from '@expo/vector-icons';
-import { View } from 'react-native'; // Import View for the root element
+import { View } from 'react-native';
 
 const Stack = createNativeStackNavigator();
-const BottomTab = createBottomTabNavigator(); // Renamed to avoid conflict
-const TopTab = createMaterialTopTabNavigator(); // New TopTab navigator
+const BottomTab = createBottomTabNavigator();
+const TopTab = createMaterialTopTabNavigator();
 
-function AppContent() { // New component to use context
+function AppContent() {
   const { layoutMode, darkMode, isReady } = useLayout();
 
   if (!isReady) {
@@ -32,9 +32,9 @@ function AppContent() { // New component to use context
           initialRouteName="Home"
           screenOptions={{
             headerShown: false,
-            tabBarActiveTintColor: 'blue',
+            tabBarActiveTintColor: darkMode ? 'white' : 'blue', // Conditional color
             tabBarInactiveTintColor: 'gray',
-            tabBarIndicatorStyle: { backgroundColor: 'blue' },
+            tabBarIndicatorStyle: { backgroundColor: darkMode ? 'white' : 'blue' }, // Conditional color
             tabBarStyle: { backgroundColor: darkMode ? '#333' : '#f8f8f8' }, // Dark mode for tab bar
           }}
         >
@@ -56,9 +56,9 @@ function AppContent() { // New component to use context
               }
               return <Ionicons name={iconName} size={size} color={color} />;
             },
-            tabBarActiveTintColor: 'blue',
+            tabBarActiveTintColor: darkMode ? 'white' : 'blue',
             tabBarInactiveTintColor: 'gray',
-            tabBarStyle: { backgroundColor: darkMode ? '#333' : '#f8f8f8' }, // Dark mode for tab bar
+            tabBarStyle: { backgroundColor: darkMode ? '#333' : '#f8f8f8' },
           })}
         >
           <BottomTab.Screen name="Home" component={MainScreen} />
@@ -69,7 +69,7 @@ function AppContent() { // New component to use context
   }
 
   return (
-    <View className={darkMode ? 'dark flex-1' : 'flex-1'}> {/* Apply dark class */}
+    <View className={darkMode ? 'dark flex-1' : 'flex-1'}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="MainTabs" component={TabNavigator} />
         <Stack.Screen name="Settings" component={SettingScreen} />
