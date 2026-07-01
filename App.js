@@ -22,7 +22,7 @@ function AppContent() {
   const { layoutMode, darkMode, isReady } = useLayout();
 
   if (!isReady) {
-    return null; // Or a loading spinner
+    return null;
   }
 
   function TabNavigator() {
@@ -32,17 +32,17 @@ function AppContent() {
           initialRouteName="Home"
           screenOptions={{
             headerShown: false,
-            tabBarActiveTintColor: darkMode ? 'white' : 'blue', // Conditional color
+            tabBarActiveTintColor: darkMode ? 'white' : 'blue',
             tabBarInactiveTintColor: 'gray',
-            tabBarIndicatorStyle: { backgroundColor: darkMode ? 'white' : 'blue' }, // Conditional color
-            tabBarStyle: { backgroundColor: darkMode ? '#333' : '#f8f8f8' }, // Dark mode for tab bar
+            tabBarIndicatorStyle: { backgroundColor: darkMode ? 'white' : 'blue' },
+            tabBarStyle: { backgroundColor: darkMode ? '#333333' : '#f8f8f8' },
           }}
         >
           <TopTab.Screen name="Home" component={MainScreen} />
           <TopTab.Screen name="Map" component={MapScreen} />
         </TopTab.Navigator>
       );
-    } else { // Default to 'tabs' mode
+    } else {
       return (
         <BottomTab.Navigator
           screenOptions={({ route }) => ({

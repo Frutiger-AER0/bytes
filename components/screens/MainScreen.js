@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import AppHeader from '../layout/AppHeader';
 import HotspotCard from '../layout/HotspotCard';
-import { useLayout } from '../../context/LayoutContext'; // Import useLayout
+import { useLayout } from '../../context/LayoutContext';
 
 const MainScreen = ({ navigation }) => {
   const { darkMode } = useLayout(); // Get darkMode from context

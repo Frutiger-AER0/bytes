@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
 import * as Location from 'expo-location';
-import { useLayout } from '../../context/LayoutContext'; // Import useLayout
+import { useLayout } from '../../context/LayoutContext';
 
 const EditForm = ({ initialHotspot }) => {
   const navigation = useNavigation();
-  const { darkMode } = useLayout(); // Get darkMode from context
+  const { darkMode } = useLayout();
   const mapRef = useRef(null);
   const [name, setName] = useState(initialHotspot?.name || '');
   const [review, setReview] = useState(initialHotspot?.review || '');
@@ -29,8 +29,8 @@ const EditForm = ({ initialHotspot }) => {
         const region = {
           latitude: initialLat,
           longitude: initialLon,
-          latitudeDelta: 0.005, // Street level zoom
-          longitudeDelta: 0.005, // Street level zoom
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
         };
         setMapRegion(region);
         setLocationLoading(false);
@@ -102,7 +102,7 @@ const EditForm = ({ initialHotspot }) => {
     }
 
     const formData = {
-      id: initialHotspot.id, // Include ID for update
+      id: initialHotspot.id,
       name,
       latitude,
       longitude,
@@ -155,7 +155,7 @@ const EditForm = ({ initialHotspot }) => {
           <MapView
             ref={mapRef}
             style={styles.map}
-            provider={PROVIDER_GOOGLE}
+            provider="google"
             initialRegion={mapRegion}
             onPress={handleMapPress}
             showsUserLocation={true}

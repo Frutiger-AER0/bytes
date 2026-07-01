@@ -5,9 +5,8 @@ import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/nativ
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useLayout } from '../../context/LayoutContext'; // Import useLayout
+import { useLayout } from '../../context/LayoutContext';
 
-// Define the directory for storing images
 const HOTSPOT_IMAGES_DIR = FileSystem.documentDirectory + 'hotspot_images/';
 
 const HotspotScreen = () => {
@@ -16,7 +15,7 @@ const HotspotScreen = () => {
   const { hotspot } = route.params;
   const [imageUri, setImageUri] = useState(null);
   const [isPickingImage, setIsPickingImage] = useState(false);
-  const { darkMode } = useLayout(); // Get darkMode from context
+  const { darkMode } = useLayout();
 
   // Function to load image from local storage
   const loadImage = async () => {
@@ -177,21 +176,17 @@ const HotspotScreen = () => {
 
   return (
     <View className={`flex-1 ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
-      {/* Custom Header */}
       <View className={`w-full h-[100px] flex-row items-end px-[15px] border-b pt-[10px] pb-[10px] ${darkMode ? 'bg-gray-800 border-b-gray-700' : 'bg-[#f8f8f8] border-b-[#e0e0e0]'}`}>
-        {/* Left Section (Back Button) */}
         <View className="w-[42px] h-[42px] justify-center items-center">
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={32} color={darkMode ? "white" : "black"} />
           </TouchableOpacity>
         </View>
 
-        {/* Center Section (Hotspot Name) */}
         <View className="flex-1 justify-center items-center">
           <Text className={`text-[24px] font-bold ${darkMode ? 'text-white' : 'text-black'}`} numberOfLines={1} ellipsizeMode="tail">{hotspot.name}</Text>
         </View>
 
-        {/* Right Section (Edit and Delete Buttons) */}
         <View className="flex-row items-center">
           <TouchableOpacity onPress={() => navigation.navigate('EditHotspot', { hotspot: hotspot })} className="p-1">
             <Ionicons name="pencil-outline" size={28} color={darkMode ? "white" : "black"} />
@@ -203,7 +198,6 @@ const HotspotScreen = () => {
       </View>
 
       <ScrollView className="flex-1 p-4">
-        {/* Image Section */}
         <TouchableOpacity
           onPress={pickImage}
           disabled={isPickingImage}
@@ -216,7 +210,6 @@ const HotspotScreen = () => {
           )}
         </TouchableOpacity>
 
-        {/* Review */}
         <Text className={`text-lg font-semibold mb-2 ${darkMode ? 'text-white' : 'text-black'}`}>Review:</Text>
         <Text className={`text-base ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{hotspot.review}</Text>
       </ScrollView>

@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
 import * as Location from 'expo-location';
-import { useLayout } from '../../context/LayoutContext'; // Import useLayout
+import { useLayout } from '../../context/LayoutContext';
 
 const CreateForm = () => {
   const navigation = useNavigation();
-  const { darkMode } = useLayout(); // Get darkMode from context
+  const { darkMode } = useLayout();
   const mapRef = useRef(null);
   const [name, setName] = useState('');
   const [review, setReview] = useState('');
@@ -126,7 +126,7 @@ const CreateForm = () => {
           <MapView
             ref={mapRef}
             style={styles.map}
-            provider={PROVIDER_GOOGLE}
+            provider="google"
             initialRegion={mapRegion}
             onPress={handleMapPress}
             showsUserLocation={true}

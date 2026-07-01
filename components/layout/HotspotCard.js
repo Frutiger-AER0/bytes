@@ -3,11 +3,11 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useLayout } from '../../context/LayoutContext'; // Import useLayout
+import { useLayout } from '../../context/LayoutContext';
 
 const HotspotCard = ({ hotspot }) => {
   const navigation = useNavigation();
-  const { darkMode } = useLayout(); // Get darkMode from context
+  const { darkMode } = useLayout();
   const [isFavorited, setIsFavorited] = useState(false);
 
   useEffect(() => {

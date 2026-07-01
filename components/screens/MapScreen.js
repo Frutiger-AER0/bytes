@@ -102,7 +102,7 @@ const MapScreen = ({ navigation }) => {
       <AppHeader navigation={navigation} />
       {mapRegion ? (
         <MapView
-          key={darkMode ? 'dark-map' : 'light-map'} // Add key to force re-render
+          key={darkMode ? 'dark-map' : 'light-map'}
           ref={mapRef}
           style={styles.map}
           provider="google"
