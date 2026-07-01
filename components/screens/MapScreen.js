@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, ActivityIndicator, Alert, StyleSheet } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { useFocusEffect } from '@react-navigation/native';
 import AppHeader from '../layout/AppHeader';
@@ -105,7 +105,7 @@ const MapScreen = ({ navigation }) => {
           key={darkMode ? 'dark-map' : 'light-map'} // Add key to force re-render
           ref={mapRef}
           style={styles.map}
-          provider={PROVIDER_GOOGLE}
+          provider="google"
           initialRegion={mapRegion}
           showsUserLocation={true}
           showsMyLocationButton={true}
