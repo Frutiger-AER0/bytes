@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useLayout } from '../../context/LayoutContext'; // Import useLayout
 
 const HotspotCard = ({ hotspot }) => {
   const navigation = useNavigation();
+  const { darkMode } = useLayout(); // Get darkMode from context
   const [isFavorited, setIsFavorited] = useState(false);
 
   useEffect(() => {
-    // Load favorite status from AsyncStorage when component mounts
     const loadFavoriteStatus = async () => {
       try {
         const favorited = await AsyncStorage.getItem(`@favorite_hotspot_${hotspot.id}`);
@@ -21,7 +22,7 @@ const HotspotCard = ({ hotspot }) => {
       }
     };
     loadFavoriteStatus();
-  }, [hotspot.id]); // Reload if hotspot ID changes
+  }, [hotspot.id]);
 
   const toggleFavorite = async () => {
     try {
@@ -39,12 +40,12 @@ const HotspotCard = ({ hotspot }) => {
 
   return (
     <TouchableOpacity
-      className="flex-row items-center justify-between p-4 mb-3 bg-white rounded-lg shadow-md"
+      className={`flex-row items-center justify-between p-4 mb-3 rounded-lg shadow-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}
       onPress={() => navigation.navigate('HotspotDetail', { hotspot: hotspot })}
     >
-      <Text className="text-lg font-semibold text-gray-800">{hotspot.name}</Text>
+      <Text className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{hotspot.name}</Text>
       <TouchableOpacity className="p-2" onPress={toggleFavorite}>
-        <Ionicons name={isFavorited ? "star" : "star-outline"} size={24} color={isFavorited ? "gold" : "gray"} />
+        <Ionicons name={isFavorited ? "star" : "star-outline"} size={24} color={isFavorited ? "gold" : (darkMode ? "gray" : "gray")} />
       </TouchableOpacity>
     </TouchableOpacity>
   );

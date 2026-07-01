@@ -5,7 +5,9 @@ import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/nativ
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useLayout } from '../../context/LayoutContext'; // Import useLayout
 
+// Define the directory for storing images
 const HOTSPOT_IMAGES_DIR = FileSystem.documentDirectory + 'hotspot_images/';
 
 const HotspotScreen = () => {
@@ -14,6 +16,7 @@ const HotspotScreen = () => {
   const { hotspot } = route.params;
   const [imageUri, setImageUri] = useState(null);
   const [isPickingImage, setIsPickingImage] = useState(false);
+  const { darkMode } = useLayout(); // Get darkMode from context
 
   // Function to load image from local storage
   const loadImage = async () => {
@@ -61,7 +64,6 @@ const HotspotScreen = () => {
 
     console.log("[Image Pick] pickImage function called.");
     try {
-      // Request media library permissions
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       console.log(`[Image Pick] Media library permission status: ${status}`);
 
@@ -84,7 +86,6 @@ const HotspotScreen = () => {
         const newImageUri = selectedAsset.uri;
         console.log(`[Image Pick] Selected image URI: ${newImageUri}`);
 
-        // Ensure the directory exists
         try {
           const dirInfo = await FileSystem.getInfoAsync(HOTSPOT_IMAGES_DIR);
           if (!dirInfo.exists) {
@@ -99,20 +100,17 @@ const HotspotScreen = () => {
           return;
         }
 
-        // Define the local file path
         const fileName = `hotspot_${hotspot.id}_${Date.now()}.jpg`;
         const localFilePath = HOTSPOT_IMAGES_DIR + fileName;
         console.log(`[Image Pick] Local file path for saving: ${localFilePath}`);
 
         try {
-          // Copy the image to the local directory
           await FileSystem.copyAsync({
             from: newImageUri,
             to: localFilePath,
           });
           console.log("[Image Pick] Image copied successfully to local storage.");
 
-          // Store the local file path in AsyncStorage
           const storageKey = `hotspotImage_${hotspot.id}`;
           await AsyncStorage.setItem(storageKey, localFilePath);
           setImageUri(localFilePath);
@@ -146,7 +144,6 @@ const HotspotScreen = () => {
           text: "Delete",
           onPress: async () => {
             try {
-              // 1. Delete from server
               const response = await fetch(`http://145.24.237.86:8011/hotspots/${hotspot.id}`, {
                 method: 'DELETE',
               });
@@ -156,7 +153,6 @@ const HotspotScreen = () => {
                 throw new Error(`Failed to delete hotspot: ${errorData.message || response.statusText}`);
               }
 
-              // 2. Delete local image if exists
               const storageKey = `hotspotImage_${hotspot.id}`;
               const storedUri = await AsyncStorage.getItem(storageKey);
               if (storedUri) {
@@ -180,25 +176,25 @@ const HotspotScreen = () => {
   };
 
   return (
-    <View className="flex-1 bg-white">
+    <View className={`flex-1 ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
       {/* Custom Header */}
-      <View className="w-full h-[100px] flex-row items-end px-[15px] bg-[#f8f8f8] border-b border-b-[#e0e0e0] pt-[10px] pb-[10px]">
+      <View className="w-full h-[100px] flex-row items-end px-[15px] bg-[#f8f8f8] dark:bg-gray-800 border-b border-b-[#e0e0e0] dark:border-b-gray-700 pt-[10px] pb-[10px]">
         {/* Left Section (Back Button) */}
         <View className="w-[42px] h-[42px] justify-center items-center">
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={32} color="black" />
+            <Ionicons name="arrow-back" size={32} color={darkMode ? "white" : "black"} />
           </TouchableOpacity>
         </View>
 
         {/* Center Section (Hotspot Name) */}
         <View className="flex-1 justify-center items-center">
-          <Text className="text-[24px] font-bold text-black" numberOfLines={1} ellipsizeMode="tail">{hotspot.name}</Text>
+          <Text className="text-[24px] font-bold text-black dark:text-white" numberOfLines={1} ellipsizeMode="tail">{hotspot.name}</Text>
         </View>
 
         {/* Right Section (Edit and Delete Buttons) */}
         <View className="flex-row items-center">
           <TouchableOpacity onPress={() => navigation.navigate('EditHotspot', { hotspot: hotspot })} className="p-1">
-            <Ionicons name="pencil-outline" size={28} color="black" />
+            <Ionicons name="pencil-outline" size={28} color={darkMode ? "white" : "black"} />
           </TouchableOpacity>
           <TouchableOpacity onPress={handleDeleteHotspot} className="p-1 ml-2">
             <Ionicons name="trash-outline" size={28} color="red" />
@@ -210,19 +206,19 @@ const HotspotScreen = () => {
         {/* Image Section */}
         <TouchableOpacity
           onPress={pickImage}
-          disabled={isPickingImage} // Disable while picking
-          className="w-full h-64 bg-gray-200 rounded-lg mb-4 justify-center items-center overflow-hidden"
+          disabled={isPickingImage}
+          className={`w-full h-64 rounded-lg mb-4 justify-center items-center overflow-hidden ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`}
         >
           {imageUri ? (
             <Image source={{ uri: imageUri }} style={StyleSheet.absoluteFillObject} resizeMode="cover" />
           ) : (
-            <Text className="text-gray-500">Tap to add image</Text>
+            <Text className={`text-gray-500 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Tap to add image</Text>
           )}
         </TouchableOpacity>
 
         {/* Review */}
-        <Text className="text-lg font-semibold mb-2">Review:</Text>
-        <Text className="text-base text-gray-700">{hotspot.review}</Text>
+        <Text className={`text-lg font-semibold mb-2 ${darkMode ? 'text-white' : 'text-black'}`}>Review:</Text>
+        <Text className={`text-base ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>{hotspot.review}</Text>
       </ScrollView>
     </View>
   );

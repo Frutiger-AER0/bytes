@@ -3,9 +3,11 @@ import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, StyleSheet,
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
 import * as Location from 'expo-location';
+import { useLayout } from '../../context/LayoutContext'; // Import useLayout
 
 const CreateForm = () => {
   const navigation = useNavigation();
+  const { darkMode } = useLayout(); // Get darkMode from context
   const mapRef = useRef(null);
   const [name, setName] = useState('');
   const [review, setReview] = useState('');
@@ -39,7 +41,6 @@ const CreateForm = () => {
         };
         setMapRegion(region);
 
-        // Animate to the user's location if mapRef is available
         if (mapRef.current) {
           mapRef.current.animateToRegion(region, 1000);
         }
@@ -78,7 +79,7 @@ const CreateForm = () => {
     };
 
     try {
-      const response = await fetch('http://145.24.237.86:8011/hotspots', { // Assuming /hotspots endpoint
+      const response = await fetch('http://145.24.237.86:8011/hotspots', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -102,46 +103,49 @@ const CreateForm = () => {
   };
 
   return (
-    <ScrollView className="flex-1 p-4 bg-white">
-      <Text className="text-xl font-bold mb-4">Create New Hotspot</Text>
+    <ScrollView className={`flex-1 p-4 ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+      <Text className={`text-xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-black'}`}>Create New Hotspot</Text>
 
-      <Text className="text-lg mb-2">Hotspot Name:</Text>
+      <Text className={`text-lg mb-2 ${darkMode ? 'text-white' : 'text-black'}`}>Hotspot Name:</Text>
       <TextInput
-        className="border border-gray-300 p-3 rounded-lg mb-4 text-base"
+        className={`border p-3 rounded-lg mb-4 text-base ${darkMode ? 'border-gray-700 bg-gray-800 text-white' : 'border-gray-300 bg-white text-black'}`}
         placeholder="Enter hotspot name"
+        placeholderTextColor={darkMode ? "gray" : "gray"}
         value={name}
         onChangeText={setName}
       />
 
-      <Text className="text-lg mb-2">Location (Tap on map to select):</Text>
+      <Text className={`text-lg mb-2 ${darkMode ? 'text-white' : 'text-black'}`}>Location (Tap on map to select):</Text>
       {locationLoading ? (
         <View style={styles.mapLoadingContainer}>
-          <ActivityIndicator size="large" color="#0000ff" />
-          <Text className="mt-2 text-gray-600">Getting your location...</Text>
+          <ActivityIndicator size="large" color={darkMode ? "#fff" : "#0000ff"} />
+          <Text className={`mt-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Getting your location...</Text>
         </View>
       ) : (
-        mapRegion && ( // Only render MapView if mapRegion is set
+        mapRegion && (
           <MapView
-            ref={mapRef} // Assign ref to MapView
+            ref={mapRef}
             style={styles.map}
             provider={PROVIDER_GOOGLE}
-            initialRegion={mapRegion} // Use the fetched mapRegion
+            initialRegion={mapRegion}
             onPress={handleMapPress}
             showsUserLocation={true}
             showsMyLocationButton={true}
+            userInterfaceStyle={darkMode ? 'dark' : 'light'}
           >
             <Marker coordinate={{ latitude, longitude }} />
           </MapView>
         )
       )}
-      <Text className="text-sm text-gray-600 mb-4">
+      <Text className={`text-sm mb-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
         Latitude: {latitude.toFixed(5)}, Longitude: {longitude.toFixed(5)}
       </Text>
 
-      <Text className="text-lg mb-2">Review:</Text>
+      <Text className={`text-lg mb-2 ${darkMode ? 'text-white' : 'text-black'}`}>Review:</Text>
       <TextInput
-        className="border border-gray-300 p-3 rounded-lg mb-6 text-base h-24"
+        className={`border p-3 rounded-lg mb-6 text-base h-24 ${darkMode ? 'border-gray-700 bg-gray-800 text-white' : 'border-gray-300 bg-white text-black'}`}
         placeholder="Enter your review"
+        placeholderTextColor={darkMode ? "gray" : "gray"}
         value={review}
         onChangeText={setReview}
         multiline

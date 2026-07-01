@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
 import * as Location from 'expo-location';
+import { useLayout } from '../../context/LayoutContext'; // Import useLayout
 
 const EditForm = ({ initialHotspot }) => {
   const navigation = useNavigation();
+  const { darkMode } = useLayout(); // Get darkMode from context
   const mapRef = useRef(null);
   const [name, setName] = useState(initialHotspot?.name || '');
   const [review, setReview] = useState(initialHotspot?.review || '');
@@ -130,46 +132,49 @@ const EditForm = ({ initialHotspot }) => {
   };
 
   return (
-    <ScrollView className="flex-1 p-4 bg-white">
-      <Text className="text-xl font-bold mb-4">Edit Hotspot</Text>
+    <ScrollView className={`flex-1 p-4 ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+      <Text className={`text-xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-black'}`}>Edit Hotspot</Text>
 
-      <Text className="text-lg mb-2">Hotspot Name:</Text>
+      <Text className={`text-lg mb-2 ${darkMode ? 'text-white' : 'text-black'}`}>Hotspot Name:</Text>
       <TextInput
-        className="border border-gray-300 p-3 rounded-lg mb-4 text-base"
+        className={`border p-3 rounded-lg mb-4 text-base ${darkMode ? 'border-gray-700 bg-gray-800 text-white' : 'border-gray-300 bg-white text-black'}`}
         placeholder="Enter hotspot name"
+        placeholderTextColor={darkMode ? "gray" : "gray"}
         value={name}
         onChangeText={setName}
       />
 
-      <Text className="text-lg mb-2">Location (Tap on map to select):</Text>
+      <Text className={`text-lg mb-2 ${darkMode ? 'text-white' : 'text-black'}`}>Location (Tap on map to select):</Text>
       {locationLoading ? (
         <View style={styles.mapLoadingContainer}>
-          <ActivityIndicator size="large" color="#0000ff" />
-          <Text className="mt-2 text-gray-600">Loading location...</Text>
+          <ActivityIndicator size="large" color={darkMode ? "#fff" : "#0000ff"} />
+          <Text className={`mt-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Loading location...</Text>
         </View>
       ) : (
         mapRegion && (
           <MapView
             ref={mapRef}
             style={styles.map}
-            provider="google"
+            provider={PROVIDER_GOOGLE}
             initialRegion={mapRegion}
             onPress={handleMapPress}
             showsUserLocation={true}
             showsMyLocationButton={true}
+            userInterfaceStyle={darkMode ? 'dark' : 'light'}
           >
             <Marker coordinate={{ latitude, longitude }} />
           </MapView>
         )
       )}
-      <Text className="text-sm text-gray-600 mb-4">
+      <Text className={`text-sm mb-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
         Latitude: {latitude.toFixed(5)}, Longitude: {longitude.toFixed(5)}
       </Text>
 
-      <Text className="text-lg mb-2">Review:</Text>
+      <Text className={`text-lg mb-2 ${darkMode ? 'text-white' : 'text-black'}`}>Review:</Text>
       <TextInput
-        className="border border-gray-300 p-3 rounded-lg mb-6 text-base h-24"
+        className={`border p-3 rounded-lg mb-6 text-base h-24 ${darkMode ? 'border-gray-700 bg-gray-800 text-white' : 'border-gray-300 bg-white text-black'}`}
         placeholder="Enter your review"
+        placeholderTextColor={darkMode ? "gray" : "gray"}
         value={review}
         onChangeText={setReview}
         multiline

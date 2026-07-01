@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, ActivityIndicator, Alert, StyleSheet } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
-import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
+import { useFocusEffect } from '@react-navigation/native';
 import AppHeader from '../layout/AppHeader';
+import { useLayout } from '../../context/LayoutContext'; // Import useLayout
 
 const MapScreen = ({ navigation }) => {
+  const { darkMode } = useLayout(); // Get darkMode from context
   const mapRef = useRef(null);
   const [hotspots, setHotspots] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -72,7 +74,7 @@ const MapScreen = ({ navigation }) => {
     } finally {
       setLoading(false);
     }
-  }, []); // Empty dependency array for useCallback
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -85,32 +87,33 @@ const MapScreen = ({ navigation }) => {
 
   if (loading || locationLoading) {
     return (
-      <View className="flex-1 bg-white items-center justify-center">
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text className="mt-2 text-gray-600">Loading map and hotspots...</Text>
+      <View className={`flex-1 items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+        <ActivityIndicator size="large" color={darkMode ? "#fff" : "#0000ff"} />
+        <Text className={`mt-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Loading map and hotspots...</Text>
       </View>
     );
   }
 
   if (error) {
     return (
-      <View className="flex-1 bg-white items-center justify-center">
+      <View className={`flex-1 items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
         <Text className="text-red-500 text-lg">Error: {error.message}</Text>
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-white">
+    <View className={`flex-1 ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
       <AppHeader navigation={navigation} />
-      {mapRegion ? ( // Render MapView only if mapRegion is set
+      {mapRegion ? (
         <MapView
           ref={mapRef}
           style={styles.map}
-          provider="google"
+          provider={PROVIDER_GOOGLE}
           initialRegion={mapRegion}
           showsUserLocation={true}
           showsMyLocationButton={true}
+          userInterfaceStyle={darkMode ? 'dark' : 'light'} // Apply dark/light style to map itself
         >
           {hotspots.map((hotspot) => (
             hotspot.latitude && hotspot.longitude && (
@@ -127,8 +130,8 @@ const MapScreen = ({ navigation }) => {
           ))}
         </MapView>
       ) : (
-        <View className="flex-1 items-center justify-center">
-          <Text className="text-gray-500 text-lg">Map not available without location.</Text>
+        <View className={`flex-1 items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+          <Text className={`text-gray-500 text-lg ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Map not available without location.</Text>
         </View>
       )}
     </View>
